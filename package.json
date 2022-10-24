@@ -6,15 +6,16 @@
   "author": "Safwat Fathi",
   "license": "MIT",
   "scripts": {
-		"dev": "NODE_ENV=development nodemon ./app",
+    "dev": "NODE_ENV=development nodemon ./app",
     "lint": "eslint ./app --ext .ts",
-		"build": "yarn lint && NODE_ENV=production tsc --build",
-		"test": "yarn build && jasmine"
+    "build": "yarn lint && NODE_ENV=production tsc --build",
+    "test": "yarn build && jasmine"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "sharp": "^0.31.1"
   },
   "devDependencies": {
     "@swc/core": "^1.3.10",
