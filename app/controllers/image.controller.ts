@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { promises as fsPromises } from "fs";
-// import fs from "fs";
-const sharp = require("sharp");
+import sharp from "sharp";
 
 export const getImage = async (req: Request, res: Response) => {
   try {
@@ -15,19 +14,19 @@ export const getImage = async (req: Request, res: Response) => {
     );
 
     const resizedImg = await sharp(imagesDir + "/" + imgToServe)
-      .resize({
-        width: width && +width,
-        height: height && +height,
-      })
-      .toFormat("jpeg")
-      .toBuffer();
+      .resize(Number(width), Number(height))
+      .toFormat("jpeg");
 
-    await fsPromises.writeFile(
-      imagesDir + `/${filename}-${width}-${height}.jpeg`,
-      resizedImg
-    );
+    // convert to buffer
+    const toBuffer = await resizedImg.clone().toBuffer();
 
-    res.type("image/jpeg").send(resizedImg);
+    // convert & save as file
+    await resizedImg
+      .clone()
+      .toFile(imagesDir + `/${filename}-${width}-${height}.jpeg`);
+
+    // response with file
+    res.type("image/jpeg").send(toBuffer);
   } catch (err) {
     console.log(err);
 
