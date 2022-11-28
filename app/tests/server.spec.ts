@@ -3,7 +3,6 @@ import app from "../server";
 
 const request = supertest(app);
 
-// * this is test suite
 describe("Test main endpoint", function () {
   it("GET /api", async function () {
     const res = await request.get("/api");

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { promises as fsPromises } from "fs";
-import sharp from "sharp";
+import { transform } from "../utils";
 
 export const getImage = async (req: Request, res: Response) => {
   try {
@@ -16,38 +16,18 @@ export const getImage = async (req: Request, res: Response) => {
       (file: string) => file.indexOf(imgWithDimensions) > -1
     );
 
-    // console.log(dirFiles);
-    // console.log(
-    //   dirFiles.find((file: string) => file.indexOf(imgWithDimensions) > -1)
-    // );
-
     if (isExist) {
-      console.log("does exist");
-
       const readfile = await fsPromises.readFile(imagesDir + "/" + isExist);
       return res.type("image/jpeg").send(readfile);
     }
 
-    console.log("does not exist");
-
-    const imgToServe = dirFiles.find(
-      (file) => file.indexOf(filename as string) > -1
+    const newImage = await transform(
+      filename as string,
+      width as string,
+      height as string
     );
 
-    const resizedImg = await sharp(imagesDir + "/" + imgToServe)
-      .resize(Number(width), Number(height))
-      .toFormat("jpeg");
-
-    // convert to buffer
-    const toBuffer = await resizedImg.clone().toBuffer();
-
-    // convert & save as file
-    await resizedImg
-      .clone()
-      .toFile(imagesDir + `/${filename}-${width}-${height}.jpeg`);
-
-    // response with file
-    res.type("image/jpeg").send(toBuffer);
+    res.type("image/jpeg").send(newImage);
   } catch (err) {
     console.log(err);
 
